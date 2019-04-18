@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include "libft.h"
+#include "get_next_line.h"
+
+static int	split_buff(char **str, char **line)
+{
+    char	    *left;
+    char	    *right;
+    int		    i;
+    int		    j;
+
+    i = 0;
+    j = ft_strlen(*str);
+    while ((*str)[i] != '\n' && (*str)[i])
+	i++;
+    if (!(left = (char*)malloc(i + 1)))
+	return (-1);
+    ft_memcpy(left, *str, i);
+    left[i] = '\0';
+    *line = left;
+    if (i == j)
+	return (0);
+    if (!(right = (char*)malloc(j - i + 1)))
+	return (-1);
+    ft_memcpy(right, (*str + i + 1), j - i);
+    right[j - i] = '\0';
+    free(*str);
+    *str = right;
+    return (1);
+}
+
+int		get_next_line(const int fd, char **line)
+{
+    static char	    *str[100];
+    char	    *tmp;
+    char	    buff[BUFF_SIZE + 1];
+    int		    ret;
+
+    if (!str[fd])
+	str[fd] = (char*)malloc(0);
+    while (ft_strchr(str[fd], '\n') == NULL) 
+    {
+	if((ret = read(fd, buff, BUFF_SIZE)) < 0)
+	    return (-1);
+	if (ret == 0)
+	    return (0);
+	buff[ret] = '\0';
+	tmp = str[fd];
+	str[fd] = ft_strjoin(str[fd], buff);
+	free(tmp);
+    }
+    *line = str[fd];
+    if (split_buff(&str[fd], line) == 0)
+	return (0);
+    return (1);
+}

@@ -1,44 +1,41 @@
 #include <stdio.h>
-#include <unistd.h>
 #include "libft.h"
-#include "displ.h"
+#include "get_next_line.h"
 
-char	*ft_readline(const int fd, char **line)
+int	main(void)
 {
-    static char	    *str;
-    char	    *tmp;
-    char	    buff[BUFF_SIZE];
-    int		    ret;
+    int	    fd1;
+    int	    fd2;
+    int	    fd3;
+    char    *line1;
+    char    *line2;
+    char    *line3;
+    int	    i;
 
-    if (!str)
-	str = (char*)malloc(0);
-    while (ft_strchr(str, '\n') == NULL) 
+    i = 0;
+    fd1 = open("get_next_line.h", O_RDONLY);
+    fd2 = open("get_next_line.c", O_RDONLY);
+    fd3 = open("libft.h", O_RDONLY);
+//    while ((i = get_next_line(fd1, &line1)) == 1)
+//    {
+//	printf("%s\n", line1);
+//	free(line1);
+//    }
+
+    while (i < 10)
     {
-	if((ret = read(fd, buff, BUFF_SIZE)) < 0)
-	    break ;
-	buff[ret] = '\0';
-	tmp = str;
-	str = ft_strjoin(str, buff);
-	free(tmp);
+	get_next_line(fd1, &line1);
+	printf("%s\n", line1);
+	get_next_line(fd2, &line2);
+	printf("%s\n", line2);
+	get_next_line(fd3, &line3);
+	printf("%s\n", line3);
+	free(line1);
+	free(line2);
+	free(line3);
+	i++;
     }
-
-    *line = str;
-    return (NULL);
-}
-
-int	main(int argc, char **argv)
-{
-    int	    fd;
-    char    *line;
-    if (argc != 2)
-	return (0);
-    fd = open(argv[1], O_RDONLY);
-    ft_readline(fd, &line);
-    printf("%s\n\n\n", line);
-    ft_readline(fd, &line);
-    printf("%s\n\n\n", line);
-    ft_readline(fd, &line);
-    printf("%s\n\n\n", line);
-    free(line);
-    return (0);
+    close(fd1);
+    close(fd2);
+  return (0);
 }
